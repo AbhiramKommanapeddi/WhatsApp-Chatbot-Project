@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WhatsApp Chatbot Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #25D366 0%, #128C7E 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .dashboard {
+            padding: 30px;
+        }
+
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .card {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 25px;
+            border-left: 4px solid #25D366;
+            transition: transform 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+        }
+
+        .card h3 {
+            color: #128C7E;
+            margin-bottom: 15px;
+            font-size: 1.3rem;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #25D366;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #25D366 0%, #128C7E 100%);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(37, 211, 102, 0.3);
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .stats-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-left: none;
+        }
+
+        .stats-card h3 {
+            color: white;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+        }
+
+        .stat-item {
+            text-align: center;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: bold;
+            display: block;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+
+        .response-area {
+            margin-top: 20px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border-left: 4px solid #17a2b8;
+            min-height: 100px;
+            font-family: 'Courier New', monospace;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+
+        .success {
+            border-left-color: #28a745;
+            background-color: #d4edda;
+            color: #155724;
+        }
+
+        .error {
+            border-left-color: #dc3545;
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+
+        .loading {
+            border-left-color: #ffc107;
+            background-color: #fff3cd;
+            color: #856404;
+        }
+
+        .endpoint-list {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+
+        .endpoint-list h4 {
+            color: #128C7E;
+            margin-bottom: 15px;
+        }
+
+        .endpoint-list ul {
+            list-style: none;
+        }
+
+        .endpoint-list li {
+            padding: 8px 0;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .endpoint-list li:last-child {
+            border-bottom: none;
+        }
+
+        .method {
+            background: #25D366;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+
+        .method.post {
+            background: #007bff;
+        }
+
+        .method.get {
+            background: #28a745;
+        }
+
+        @media (max-width: 768px) {
+            .card-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🚗 WhatsApp Chatbot Dashboard</h1>
+            <p>Navigation Assistant - Management Console</p>
+        </div>
+
+        <div class="dashboard">
+            <div class="card-grid">
+                <!-- Send Message Card -->
+                <div class="card">
+                    <h3>📱 Send Test Message</h3>
+                    <form id="sendMessageForm">
+                        <div class="form-group">
+                            <label for="phoneNumber">Phone Number:</label>
+                            <input type="text" id="phoneNumber" placeholder="e.g., 1234567890" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="message">Message:</label>
+                            <textarea id="message" rows="3" placeholder="Enter your test message" required></textarea>
+                        </div>
+                        <button type="submit" class="btn">Send Message</button>
+                    </form>
+                    <div id="messageResponse" class="response-area" style="display: none;"></div>
+                </div>
+
+                <!-- Send Button Message Card -->
+                <div class="card">
+                    <h3>🔘 Send Button Message</h3>
+                    <form id="sendButtonForm">
+                        <div class="form-group">
+                            <label for="buttonPhoneNumber">Phone Number:</label>
+                            <input type="text" id="buttonPhoneNumber" placeholder="e.g., 1234567890" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="buttonText">Message Text:</label>
+                            <textarea id="buttonText" rows="2" placeholder="Choose an option:" required></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="buttonIds">Button IDs (comma-separated):</label>
+                            <input type="text" id="buttonIds" placeholder="btn1,btn2,btn3" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="buttonTitles">Button Titles (comma-separated):</label>
+                            <input type="text" id="buttonTitles" placeholder="Option 1,Option 2,Option 3" required>
+                        </div>
+                        <button type="submit" class="btn">Send Button Message</button>
+                    </form>
+                    <div id="buttonResponse" class="response-area" style="display: none;"></div>
+                </div>
+
+                <!-- Statistics Card -->
+                <div class="card stats-card">
+                    <h3>📊 Chatbot Statistics</h3>
+                    <div class="stats-grid">
+                        <div class="stat-item">
+                            <span class="stat-number" id="totalMessages">--</span>
+                            <span class="stat-label">Total Messages</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-number" id="activeSessions">--</span>
+                            <span class="stat-label">Active Sessions</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-number" id="inboundMessages">--</span>
+                            <span class="stat-label">Inbound</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-number" id="outboundMessages">--</span>
+                            <span class="stat-label">Outbound</span>
+                        </div>
+                    </div>
+                    <button class="btn" onclick="loadStats()" style="margin-top: 20px;">Refresh Stats</button>
+                </div>
+
+                <!-- Message History Card -->
+                <div class="card">
+                    <h3>📜 Message History</h3>
+                    <div class="form-group">
+                        <label for="historyPhoneNumber">Phone Number:</label>
+                        <input type="text" id="historyPhoneNumber" placeholder="e.g., 1234567890">
+                    </div>
+                    <button class="btn" onclick="loadMessageHistory()">Load Messages</button>
+                    <div id="messageHistory" class="response-area" style="display: none;"></div>
+                </div>
+
+                <!-- Session Management Card -->
+                <div class="card">
+                    <h3>👥 Session Management</h3>
+                    <button class="btn" onclick="loadActiveSessions()" style="margin-bottom: 15px;">Load Active Sessions</button>
+                    <div class="form-group">
+                        <label for="resetPhoneNumber">Reset Session for Phone Number:</label>
+                        <input type="text" id="resetPhoneNumber" placeholder="e.g., 1234567890">
+                    </div>
+                    <button class="btn" onclick="resetSession()">Reset Session</button>
+                    <div id="sessionResponse" class="response-area" style="display: none;"></div>
+                </div>
+
+                <!-- Health Check Card -->
+                <div class="card">
+                    <h3>🏥 System Health</h3>
+                    <button class="btn" onclick="checkHealth()">Check Health Status</button>
+                    <div id="healthResponse" class="response-area" style="display: none;"></div>
+                </div>
+            </div>
+
+            <!-- API Endpoints Documentation -->
+            <div class="endpoint-list">
+                <h4>🔌 Available API Endpoints</h4>
+                <ul>
+                    <li><span class="method get">GET</span>/api/health - Health check</li>
+                    <li><span class="method post">POST</span>/api/send-message - Send text message</li>
+                    <li><span class="method post">POST</span>/api/send-button-message - Send button message</li>
+                    <li><span class="method get">GET</span>/api/messages/{phoneNumber} - Get message history</li>
+                    <li><span class="method get">GET</span>/api/sessions - Get active sessions</li>
+                    <li><span class="method get">GET</span>/api/stats - Get statistics</li>
+                    <li><span class="method post">POST</span>/api/session/{phoneNumber}/reset - Reset session</li>
+                    <li><span class="method get">GET</span>/api/webhook/health - Webhook health</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = window.location.origin + '/api';
+
+        // Send Message Form
+        document.getElementById('sendMessageForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const phoneNumber = document.getElementById('phoneNumber').value;
+            const message = document.getElementById('message').value;
+            
+            showResponse('messageResponse', 'Sending message...', 'loading');
+            
+            try {
+                const response = await fetch(`${API_BASE}/send-message`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: `to=${encodeURIComponent(phoneNumber)}&message=${encodeURIComponent(message)}`
+                });
+                
+                const result = await response.json();
+                showResponse('messageResponse', JSON.stringify(result, null, 2), response.ok ? 'success' : 'error');
+            } catch (error) {
+                showResponse('messageResponse', `Error: ${error.message}`, 'error');
+            }
+        });
+
+        // Send Button Message Form
+        document.getElementById('sendButtonForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const phoneNumber = document.getElementById('buttonPhoneNumber').value;
+            const bodyText = document.getElementById('buttonText').value;
+            const buttonIds = document.getElementById('buttonIds').value.split(',').map(s => s.trim());
+            const buttonTitles = document.getElementById('buttonTitles').value.split(',').map(s => s.trim());
+            
+            showResponse('buttonResponse', 'Sending button message...', 'loading');
+            
+            try {
+                const params = new URLSearchParams();
+                params.append('to', phoneNumber);
+                params.append('bodyText', bodyText);
+                buttonIds.forEach(id => params.append('buttonIds', id));
+                buttonTitles.forEach(title => params.append('buttonTitles', title));
+
+                const response = await fetch(`${API_BASE}/send-button-message`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: params
+                });
+                
+                const result = await response.json();
+                showResponse('buttonResponse', JSON.stringify(result, null, 2), response.ok ? 'success' : 'error');
+            } catch (error) {
+                showResponse('buttonResponse', `Error: ${error.message}`, 'error');
+            }
+        });
+
+        // Load Statistics
+        async function loadStats() {
+            try {
+                const response = await fetch(`${API_BASE}/stats`);
+                const stats = await response.json();
+                
+                document.getElementById('totalMessages').textContent = stats.totalMessages || 0;
+                document.getElementById('activeSessions').textContent = stats.activeSessions || 0;
+                document.getElementById('inboundMessages').textContent = stats.inboundMessages || 0;
+                document.getElementById('outboundMessages').textContent = stats.outboundMessages || 0;
+            } catch (error) {
+                console.error('Error loading stats:', error);
+            }
+        }
+
+        // Load Message History
+        async function loadMessageHistory() {
+            const phoneNumber = document.getElementById('historyPhoneNumber').value;
+            if (!phoneNumber) {
+                showResponse('messageHistory', 'Please enter a phone number', 'error');
+                return;
+            }
+            
+            showResponse('messageHistory', 'Loading message history...', 'loading');
+            
+            try {
+                const response = await fetch(`${API_BASE}/messages/${encodeURIComponent(phoneNumber)}`);
+                const messages = await response.json();
+                
+                if (messages.length === 0) {
+                    showResponse('messageHistory', 'No messages found for this phone number', 'success');
+                } else {
+                    const formattedMessages = messages.map(msg => 
+                        `${msg.timestamp} - ${msg.direction} - ${msg.messageType}: ${msg.messageText || 'N/A'}`
+                    ).join('\n');
+                    showResponse('messageHistory', formattedMessages, 'success');
+                }
+            } catch (error) {
+                showResponse('messageHistory', `Error: ${error.message}`, 'error');
+            }
+        }
+
+        // Load Active Sessions
+        async function loadActiveSessions() {
+            showResponse('sessionResponse', 'Loading active sessions...', 'loading');
+            
+            try {
+                const response = await fetch(`${API_BASE}/sessions`);
+                const sessions = await response.json();
+                
+                if (sessions.length === 0) {
+                    showResponse('sessionResponse', 'No active sessions found', 'success');
+                } else {
+                    const formattedSessions = sessions.map(session => 
+                        `Phone: ${session.phoneNumber} - State: ${session.currentState} - Updated: ${session.updatedAt}`
+                    ).join('\n');
+                    showResponse('sessionResponse', formattedSessions, 'success');
+                }
+            } catch (error) {
+                showResponse('sessionResponse', `Error: ${error.message}`, 'error');
+            }
+        }
+
+        // Reset Session
+        async function resetSession() {
+            const phoneNumber = document.getElementById('resetPhoneNumber').value;
+            if (!phoneNumber) {
+                showResponse('sessionResponse', 'Please enter a phone number', 'error');
+                return;
+            }
+            
+            showResponse('sessionResponse', 'Resetting session...', 'loading');
+            
+            try {
+                const response = await fetch(`${API_BASE}/session/${encodeURIComponent(phoneNumber)}/reset`, {
+                    method: 'POST'
+                });
+                const result = await response.json();
+                showResponse('sessionResponse', JSON.stringify(result, null, 2), response.ok ? 'success' : 'error');
+            } catch (error) {
+                showResponse('sessionResponse', `Error: ${error.message}`, 'error');
+            }
+        }
+
+        // Check Health
+        async function checkHealth() {
+            showResponse('healthResponse', 'Checking system health...', 'loading');
+            
+            try {
+                const response = await fetch(`${API_BASE}/health`);
+                const health = await response.json();
+                showResponse('healthResponse', JSON.stringify(health, null, 2), response.ok ? 'success' : 'error');
+            } catch (error) {
+                showResponse('healthResponse', `Error: ${error.message}`, 'error');
+            }
+        }
+
+        // Utility function to show responses
+        function showResponse(elementId, message, type) {
+            const element = document.getElementById(elementId);
+            element.style.display = 'block';
+            element.textContent = message;
+            element.className = `response-area ${type}`;
+        }
+
+        // Load initial stats when page loads
+        window.addEventListener('load', () => {
+            loadStats();
+        });
+    </script>
+</body>
+</html>
